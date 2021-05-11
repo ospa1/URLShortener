@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>URL Short</title>
+</head>
+<body>
+    {% extends "base.html" %}
+    {% block content %}
+    <form method="post" action="{% url 'url_shorts:index' %}" class="form">
+        {% csrf_token %}
+        <input type="text" name="url" id="url" placeholder="Enter URL">
+        <button type="submit" class="btn btn-primary">Shorten</button>
+    </form>
+    <div>
+        {% if data %}
+            <p id="data">{{data}}</p>
+        {% else %}
+            <p id="no_link">link</p>
+        {% endif %}
+        <button class="btn btn-primary" onclick="copy('#data');">Copy</button>
+        <script type="text/javascript" charset="utf-8">
+            function copy(element) {
+              var $temp = $("<input>");
+              $("body").append($temp);
+              $temp.val($(element).text()).select();
+              document.execCommand("copy");
+              $temp.remove();
+            }
+        </script>
+    </div>
+    {% endblock content %}
+</body>
+</html>
