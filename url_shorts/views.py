@@ -10,7 +10,7 @@ from .forms import InputForm
 def index(request):
 
     context = {}
-    site = 'https://127.0.0.1:8000/'
+    site = '127.0.0.1:8000/'
 
     # return blank form if its a GET or other request
     if request.method != 'POST':
@@ -50,5 +50,5 @@ def shorten(request):
 
 def go(request, url_hash):
     url_details = Urls.objects.get(uuid=url_hash)
-    return redirect('https://' + url_details.url)
+    return redirect('http://' + url_details.url)
 
