@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 import uuid
-
+from django.http import Http404
 import url_shorts
 from url_shorts.models import Input, Urls
 from .forms import InputForm
@@ -17,15 +17,19 @@ def index(request):
         form = InputForm()
         context['form'] = form
         return render(request, 'index.html', context)
-    # if its a POST
+    # if its a POST, process data
     else:
         form = InputForm(data=request.POST)
         url_info = request.POST['url']
         print('url info: ' + url_info)
+
+        # check if url already exists
         if Input.objects.filter(url=url_info).exists():
             urls_obj = Urls.objects.get(url=url_info)
             print('exists - uuid: ' + urls_obj.uuid)
             context['data'] = site + urls_obj.uuid
+
+        # if url does not exist save it if valid
         elif form.is_valid():
             print('is valid')
             uid = str(uuid.uuid4())[:5]
@@ -33,8 +37,10 @@ def index(request):
             new_url.save()
             form.save()
             context['data'] = site + uid
+
         else:
             print('URL is not valid')
+
     context['form'] = form
     return render(request, 'index.html', context)
 
@@ -49,6 +55,12 @@ def shorten(request):
 
 
 def go(request, url_hash):
-    url_details = Urls.objects.get(uuid=url_hash)
+    print('request.method: ' + request.method)  # has to be GET
+    print('url_hash: ' + url_hash)
+    try:
+        url_details = Urls.objects.get(uuid=url_hash)
+    except url_shorts.models.Urls.DoesNotExist:
+        msg = "Page Not Found"
+        raise Http404(msg)
     return redirect('http://' + url_details.url)
 
