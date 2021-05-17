@@ -10,7 +10,8 @@ from .forms import InputForm
 def index(request):
 
     context = {}
-    site = '127.0.0.1:8000/'
+    local_site = '127.0.0.1:8000/'
+    site = 'url-short2.herokuapp.com/'
 
     # return blank form if its a GET or other request
     if request.method != 'POST':
